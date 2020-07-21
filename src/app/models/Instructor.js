@@ -1,13 +1,19 @@
 const {date} = require('../../lib/utils');
 const db = require('../../config/db');
 
+
 module.exports = {
     all(callback) {
-        db.query(`SELECT * FROM instructors`, function(err, results) {
-            if (err) {
-                return res.send("Database Error");
-            }callback(results.rows);
-        })
+        db.query(`SELECT instructors.*, 
+            count(members) AS total_students
+            FROM instructors 
+            LEFT JOIN members ON (members.instructor_id = instructors.id)
+            GROUP BY instructors.id
+            ORDER BY name ASC`, function(err, results) {
+                if (err) {
+                    throw `Database Error ${err}`;
+                }callback(results.rows);
+            })
     },
 
     create(data, callback) {
@@ -19,7 +25,7 @@ module.exports = {
             birth,
             created_at) 
             VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING id
+        RETURNING id
         `
         const values = [
             data.name,
@@ -31,7 +37,7 @@ module.exports = {
         ]
         db.query(query, values, function(err, results) {
             if (err) {
-                return res.send("Database Error");
+                throw `Database Error ${err}`;
             } callback(results.rows[0])
         })
     },
@@ -39,8 +45,56 @@ module.exports = {
     find(id, callback) {
         db.query(`SELECT * FROM instructors WHERE id = $1`, [id], function(err, results) {
                 if(err) {
-                    return res.send("Database error");
+                    throw `Database Error ${err}`;
                 } callback(results.rows[0])
+        })
+    },
+
+    findBy(filter, callback){
+        db.query(`SELECT instructors.*, 
+        count(members) AS total_students
+        FROM instructors 
+        LEFT JOIN members ON (members.instructor_id = instructors.id)
+        WHERE instructors.name ILIKE '%${filter}%'
+        OR instructors.services ILIKE '%${filter}%'
+        GROUP BY instructors.id
+        ORDER BY name ASC`, function(err, results) {
+            if (err) {
+                throw `Database Error ${err}`;
+            }callback(results.rows);
+        })
+    },
+
+    update(data, callback) {
+        const query = `UPDATE instructors SET
+            avatar_url=($1),
+            name=($2),
+            birth=($3),
+            gender=($4),
+            services=($5)
+        WHERE id = $6
+        `
+        const values = [
+            data.avatar_url,
+            data.name,
+            date(data.birth).iso,
+            data.gender,
+            data.services,
+            data.id,
+        ]
+
+        db.query(query, values, function(err, results) {
+            if(err) {
+                throw `Database Error ${err}`;
+            } callback();
+        })
+    },
+
+    delete(id, callback) {
+        db.query(`DELETE FROM instructors WHERE id = $1`, [id], function(err, results){
+            if(err) {
+                throw `Database Error ${err}`;
+            } return callback();
         })
     }
 }

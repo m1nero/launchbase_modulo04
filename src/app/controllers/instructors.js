@@ -3,9 +3,17 @@ const Instructor = require('../models/Instructor');
 
 module.exports = {
     index(req, res) {
-        Instructor.all(function (instructors) {
-            return res.render("instructors/index", {instructors});
-        })
+        const {filter} = req.query;
+
+        if(filter){
+            Instructor.findBy(filter, function(instructors){
+                return res.render("instructors/index", {instructors, filter});
+            })
+        } else {
+            Instructor.all(function (instructors) {
+                return res.render("instructors/index", {instructors});
+            })
+        }
     },
 
     create(req, res) {
@@ -39,7 +47,15 @@ module.exports = {
     },
 
     edit(req, res) {
-        return
+        Instructor.find(req.params.id, function(instructor) {
+            if (!instructor){
+                return res.send("Instructor not found!");
+            } 
+            
+            instructor.birth = date(instructor.birth).iso ;
+
+            return res.render("instructors/edit", {instructor});
+        })
     },
 
     put(req, res) {
@@ -49,10 +65,15 @@ module.exports = {
                 return res.send('Complete tudo');
             }
         }
-        return
+
+        Instructor.update(req.body, function() {
+            return res.redirect(`/instructors/${req.body.id}`)
+        })
     },
 
     delete(req, res) {
-        return
+        Instructor.delete(req.body.id, function() {
+            return res.redirect(`/instructors`)
+        })
     }
 }

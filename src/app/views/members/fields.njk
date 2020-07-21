@@ -118,7 +118,7 @@
 <div class="item">
     <div>Peso (kg)</div>
     <div>
-        <input type="number" name="weigth"
+        <input type="number" name="weight"
             value="{{member.weight}}">
     </div>
 </div>
@@ -128,6 +128,22 @@
     <div>
         <input type="number" name="height"
             value="{{member.height}}">
+    </div>
+</div>
+
+<div class="item">
+    <div>Instrutor</div>
+    <div>
+        <select name="instructor">
+            {% for instructor in instructorOptions %}
+                <option value="{{instructor.id}}" 
+                    {% if member.instructor_id == instructor_id %}
+                        selected
+                    {% endif %}>
+                    {{instructor.name}}
+                </option>
+            {% endfor %}
+        </select>
     </div>
 </div>
 
