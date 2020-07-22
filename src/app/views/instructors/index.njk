@@ -1,7 +1,6 @@
 {% extends "layout.njk" %}
 {% block content %}
 <div class="card table-container">
-    
     <div class="header">
         <a class="button" href="/instructors/create">Novo</a>
         <form action="/instructors" method="GET">
@@ -13,7 +12,6 @@
         </form>
     </div>
 
-    
     <table width="100%">
         <thead>
             <tr>
@@ -38,5 +36,11 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="pagination"
+        data-page={{pagination.page}}
+        data-total={{pagination.total}}
+        data-filter={{filter}}
+    ></div>
 </div>
 {% endblock content %}
