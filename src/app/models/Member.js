@@ -1,12 +1,12 @@
-const {date} = require('../../lib/utils');
-const db = require('../../config/db');
+const {date} = require('../../lib/utils')
+const db = require('../../config/db')
 
 module.exports = {
     all(callback) {
         db.query(`SELECT * FROM members ORDER BY name ASC`, function(err, results) {
             if (err) {
-                throw `Database Error ${err}`;
-            }callback(results.rows);
+                throw `Database Error ${err}`
+            }callback(results.rows)
         })
     },
 
@@ -38,7 +38,7 @@ module.exports = {
 
         db.query(query, values, function(err, results) {
             if (err) {
-                throw `Database Error ${err}`;
+                throw `Database Error ${err}`
             } callback(results.rows[0])
         })
     },
@@ -48,7 +48,7 @@ module.exports = {
             FROM members LEFT JOIN instructors ON (members.instructor_id = instructors.id)
             WHERE members.id = $1`, [id], function(err, results) {
                 if(err) {
-                    throw `Database Error ${err}`;
+                    throw `Database Error ${err}`
                 } callback(results.rows[0])
         })
     },
@@ -81,50 +81,49 @@ module.exports = {
 
         db.query(query, values, function(err, results) {
             if(err) {
-                throw `Database Error ${err}`;
-            } callback();
+                throw `Database Error ${err}`
+            } callback()
         })
     },
 
     delete(id, callback) {
         db.query(`DELETE FROM members WHERE id = $1`, [id], function(err, results){
             if(err) {
-                throw `Database Error ${err}`;
-            } return callback();
+                throw `Database Error ${err}`
+            } return callback()
         })
     },
 
     instructorsSelectOptions(callback){
         db.query(`SELECT name, id FROM instructors`, function(err, results){
             if (err){
-                throw `Database Error ${err}`;
-            } callback(results.rows);
+                throw `Database Error ${err}`
+            } callback(results.rows)
         })
     },
 
     paginate(params) {
-        let {filter, limit, offset, callback} = params;
+        let {filter, limit, offset, callback} = params
         
         let query = "", 
             filterQuery = "",
-            totalQuery = ` (SELECT count(*) FROM members) AS total`
+            totalQuery = `(SELECT count(*) FROM members) AS total`
 
         if (filter) {
-            filterQuery = `${query}
+            filterQuery = `
             WHERE members.name ILIKE '%${filter}%'
-            OR members.email ILIKE '%${filter}%`
+            OR members.email ILIKE '%${filter}%'`
 
             totalQuery = `(SELECT count(*) FROM members ${filterQuery}) AS total`
         }
-
-        query = `SELECT members.*, ${totalQuery}
-        FROM members
+        
+        query = `SELECT members.*, ${totalQuery} FROM members
         ${filterQuery}
         ORDER BY name ASC LIMIT $1 OFFSET $2`
 
         db.query(query, [limit, offset], function(err, results) {
             if(err) {
-                throw `Database Error ${err}`;
+                throw `Database Error ${err}`
             } callback(results.rows)
         })
     }

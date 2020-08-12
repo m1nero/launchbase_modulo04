@@ -1,23 +1,23 @@
 module.exports = {
     age(timestamp) {
-        const today = new Date();
-        const birthDate = new Date(timestamp);
+        const today = new Date()
+        const birthDate = new Date(timestamp)
     
-        let age = today.getFullYear() - birthDate.getFullYear();
+        let age = today.getFullYear() - birthDate.getFullYear()
     
-        const month = today.getMonth() - birthDate.getMonth();
+        const month = today.getMonth() - birthDate.getMonth()
     
         if (month <= 0 && today.getDate() < birthDate.getDate()) {
-            age = age - 1;
+            age = age - 1
         }
-        return age;
+        return age
     },
 
     date(timestamp) {
-        const date = new Date(timestamp);
-        const year = date.getUTCFullYear();
-        const month = `0${date.getUTCMonth() + 1}`.slice(-2);
-        const day = `0${date.getUTCDate()}`.slice(-2);
+        const date = new Date(timestamp)
+        const year = date.getUTCFullYear()
+        const month = `0${date.getUTCMonth() + 1}`.slice(-2)
+        const day = `0${date.getUTCDate()}`.slice(-2)
 
         return {
             day,
@@ -26,15 +26,15 @@ module.exports = {
             iso: `${year}-${month}-${day}`,
             birthDay: `${day}/${month}`,
             format: `${day}/${month}/${year}`
-        };
+        }
     },
 
     created_at(timestamp) {
-        const date = new Date(timestamp);
-        const year = date.getUTCFullYear();
-        const month = `0${date.getUTCMonth() + 1}`.slice(-2);
-        const day = `0${date.getUTCDate()}`.slice(-2);
+        const date = new Date(timestamp)
+        const year = date.getUTCFullYear()
+        const month = `0${date.getUTCMonth() + 1}`.slice(-2)
+        const day = `0${date.getUTCDate()}`.slice(-2)
 
-        return `${year}-${month}-${day}`;
+        return `${year}-${month}-${day}`
     },
 }
